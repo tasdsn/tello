@@ -157,7 +157,7 @@ class Tello:
 		if self.response is None:		# 応答データが無い時
 			response = 'none_response'
 		else:							# 応答データがあるとき
-			response = self.response.decode('utf-8')
+			response = self.response.decode('utf-8', 'ignore')
 
 		self.response = None	# _receive_threadスレッドが次の応答を入れてくれるので，ここでは空にしておく
 

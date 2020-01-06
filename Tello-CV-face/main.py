@@ -57,6 +57,7 @@ def main():
             else:   # 顔があるなら続けて処理
                 # 検出した顔に枠を書く
                 for (x, y, w, h) in pre_faces:
+                    # 長方形の描画
                     cv2.rectangle(cv_image, (x, y), (x+w, y+h), (0, 255, 0), 2)
 
                 # １個めの顔のx,y,w,h,顔中心cx,cyを得る
@@ -79,6 +80,10 @@ def main():
                     dx = -dx # 制御方向が逆だったので，-1を掛けて逆転させた
 
                     print('dx=%f  dy=%f  dw=%f'%(dx, dy, dw) )  # printして制御量を確認できるように
+
+                    # 不感帯…目標値と現在地が近い時、何も制御しないでゼロとする処理
+                    # ブレーキのD制御がないので大きめ
+                    # ソフトウェアリミッタ…rcコマンドは±100までの数値しか受け付けないので超えた場合は制限する
 
                     # 旋回方向の不感帯を設定
                     d = 0.0 if abs(dx) < 20.0 else dx   # ±20未満ならゼロにする
@@ -108,8 +113,9 @@ def main():
             cv2.imshow('OpenCV Window', cv_image)   # ウィンドウに表示するイメージを変えれば色々表示できる
 
             # (Y)OpenCVウィンドウでキー入力を1ms待つ
+            # 自動制御してないときの操作
             key = cv2.waitKey(1)
-            if key == 27:                   # k が27(ESC)だったらwhileループを脱出，プログラム終了
+            if key == 27:                   # key が27(ESC)だったらwhileループを脱出，プログラム終了
                 break
             elif key == ord('t'):
                 drone.takeoff()             # 離陸
